@@ -16,6 +16,10 @@
     background-color: transparent;
     font-size: 1.5rem;
     display: none;
+
+    &:hover {
+      opacity: 0.5;
+    }
   }
 
   a {
@@ -34,7 +38,7 @@
   }
 }
 
-@media only screen and (max-width: 650px) {
+@media #{$small} {
   .header {
     width: 100%;
     position: absolute;

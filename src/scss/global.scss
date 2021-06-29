@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import './variables.scss';
 
 body {
   font-family: 'Inter', sans-serif;
@@ -45,7 +46,7 @@ strong {
   padding: 20px;
 }
 
-@media only screen and (max-width: 600px) {
+@media #{$small} {
   .roundedContainer {
     width: 80%;
   }
