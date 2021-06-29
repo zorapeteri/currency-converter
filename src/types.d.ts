@@ -3,4 +3,10 @@ type User = {
   baseCurrency: string;
   savedCurrencies: string[];
   displayName: string;
+  email?: string;
+};
+
+type ReactSelectOptionType = {
+  value: string;
+  label: any;
 };

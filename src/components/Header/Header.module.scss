@@ -1,8 +1,10 @@
+@import '../../scss/variables.scss';
+
 .header {
   position: fixed;
   top: 0;
   right: 0;
-  color: steelblue;
+  color: $darksteelblue;
   font-weight: 600;
   font-size: 1.1em;
   padding: 1.3em 2.1em 0.3em 2.1em;
@@ -35,7 +37,7 @@
 @media only screen and (max-width: 650px) {
   .header {
     width: 100%;
-    position: relative;
+    position: absolute;
     background-color: rgba(white, 0.85);
     padding: 4rem 1rem 0;
 
@@ -61,11 +63,11 @@
     }
 
     &.expanded {
-      background: steelblue;
+      background: $darksteelblue;
       padding-bottom: 1.4em;
 
       :global a.active {
-        color: steelblue;
+        color: $darksteelblue;
       }
 
       nav {

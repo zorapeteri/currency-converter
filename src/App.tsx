@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Loading from './components/Loading';
+import ProfilePage from './components/ProfilePage';
 import { UserContext } from './providers/UserProvider';
 
 function App() {
@@ -14,9 +15,11 @@ function App() {
       <div className="App">
         <Header />
         <main>
-          <Route exact path="/"></Route>
+          <Route exact path="/">
+            <Redirect to={user ? '/home' : '/profile'} />
+          </Route>
           <Route exact path="/profile">
-            <h1>Profile</h1>
+            <ProfilePage />
           </Route>
           {user && (
             <>
