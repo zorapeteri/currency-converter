@@ -17,7 +17,7 @@ const getDefaultTo = (user: User | null) => {
     }
     return user.baseCurrency === 'EUR' ? 'USD' : 'EUR';
   }
-  return '';
+  return 'USD';
 };
 
 const initialConvertState: ConvertStateType = {
@@ -38,7 +38,7 @@ const Convert: React.FunctionComponent = () => {
   const [convertState, dispatch] = useReducer(convertReducer, initialConvertState);
 
   useEffect(() => {
-    fetch(`https://cool-currency-convert-server.herokuapp.com/rates?base=${user?.baseCurrency}`)
+    fetch(`https://cool-currency-convert-server.herokuapp.com/rates?base=${user?.baseCurrency || 'EUR'}`)
       .then(res => res.json())
       .then(res => {
         setCurrencies(Object.keys(res).map(key => ({ value: key, label: key })));
@@ -49,7 +49,7 @@ const Convert: React.FunctionComponent = () => {
     dispatch({
       type: 'SET_CURRENCIES',
       payload: {
-        from: user?.baseCurrency || '',
+        from: user?.baseCurrency || 'EUR',
         to: getDefaultTo(user),
       },
     });

@@ -16,16 +16,13 @@ const Header: React.FunctionComponent = () => {
       </button>
       <nav>
         {user && (
-          <>
-            <NavLink exact to="/home" onClick={() => setExpanded(false)}>
-              Home
-            </NavLink>
-            <NavLink to="/conversion" onClick={() => setExpanded(false)}>
-              Convert
-            </NavLink>
-          </>
+          <NavLink exact to="/home" onClick={() => setExpanded(false)}>
+            Home
+          </NavLink>
         )}
-
+        <NavLink to="/convert" onClick={() => setExpanded(false)}>
+            Convert
+        </NavLink>
         <NavLink to="/profile" onClick={() => setExpanded(false)}>
           {user ? user.displayName : 'Sign in'}
         </NavLink>

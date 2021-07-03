@@ -17,22 +17,19 @@ function App() {
       <div className="App">
         <Header />
         <main>
-          <Route exact path="/">
-            <Redirect to={user ? '/home' : '/profile'} />
+          <Route path="/">
+            <Redirect to="convert" />
           </Route>
           <Route exact path="/profile">
             <ProfilePage />
           </Route>
+          <Route exact path="/convert">
+              <Convert />
+          </Route>
           {user && (
-            <>
-              <Route exact path="/home">
-                <Home />
-              </Route>
-
-              <Route exact path="/conversion">
-                <Convert />
-              </Route>
-            </>
+            <Route exact path="/home">
+              <Home />
+            </Route>
           )}
         </main>
       </div>
