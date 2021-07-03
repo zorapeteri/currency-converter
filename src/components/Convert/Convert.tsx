@@ -66,6 +66,7 @@ const Convert: React.FunctionComponent = () => {
           placeholder="0"
           value={convertState.fromInputText}
           onChange={e => dispatch({ type: 'AMOUNT_FROM_CHANGE', payload: e.target.value })}
+          autoFocus={true}
         />
         <Select
           className="basic-single convertCurrencySelect"
