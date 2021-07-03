@@ -3,6 +3,8 @@ import style from './Home.module.scss';
 import { UserContext } from '../../providers/UserProvider';
 import Select from 'react-select';
 import { firestore } from '../../firebase';
+import formatOptionLabel from '../../formatOptionLabel';
+import { ImSpinner8 } from 'react-icons/im';
 
 const queueShowSwitchUp = (hold: number, next: number, start: number) => {
   setTimeout(() => {
@@ -23,6 +25,7 @@ const Home: React.FunctionComponent = () => {
   const [currencies, setCurrencies] = useState<ReactSelectOptionType[]>([]);
   const [rates, setRates] = useState<{ [index: string]: any }>({});
   const [isChangingBaseCurrency, setChangingBaseCurrency] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   const setBaseCurrency = (option: ReactSelectOptionType | null) => {
     if (option) {
@@ -42,14 +45,16 @@ const Home: React.FunctionComponent = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`https://cool-currency-convert-server.herokuapp.com/rates?base=${user?.baseCurrency}`)
       .then(res => res.json())
       .then(res => setRates(res));
   }, [user?.baseCurrency]);
 
   useEffect(() => {
-    if (rates !== []) {
+    if (Object.keys(rates).length > 0) {
       queueShowSwitchUp(700, 80, 1000);
+      setLoading(false);
     }
   }, [rates]);
 
@@ -76,13 +81,19 @@ const Home: React.FunctionComponent = () => {
           name="currency"
           options={getBaseCurrencyOptions()}
           onChange={option => setBaseCurrency(option)}
+          formatOptionLabel={formatOptionLabel}
         />
       )}
       <h1>
         <img src={`${process.env.PUBLIC_URL}/assets/flags/${user?.baseCurrency}.png`} alt="" />1{' '}
         {user?.baseCurrency} =
       </h1>
-      {rates[user?.baseCurrency || ''] === 1 && (
+      {isLoading && (
+        <span className={style.loading}>
+          <ImSpinner8 />
+        </span>
+      )}
+      {!isLoading && (
         <ul>
           {Object.keys(rates)
             .sort((a, b) => (user?.savedCurrencies.includes(a) ? -1 : 0))

@@ -17,6 +17,7 @@
     img {
       margin-right: 1rem;
       width: 6rem;
+      height: 6rem;
     }
   }
 
@@ -37,6 +38,7 @@
 
       img {
         width: 1.5rem;
+        height: 1.5rem;
         margin-right: 10px;
       }
 
@@ -66,6 +68,19 @@
     }
   }
 
+  .loading {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 3rem;
+    color: $darksteelblue;
+
+    svg {
+      animation: spin 1s infinite linear;
+    }
+  }
+
   @media #{$small} {
     h1 {
       display: block;
@@ -76,5 +91,11 @@
         display: block;
       }
     }
+  }
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
   }
 }

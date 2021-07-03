@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../providers/UserProvider';
 import { firestore } from '../../firebase';
 import Select from 'react-select';
+import formatOptionLabel from '../../formatOptionLabel';
 
 const BaseCurrency: React.FunctionComponent = () => {
   const { user } = useContext(UserContext);
@@ -36,6 +37,7 @@ const BaseCurrency: React.FunctionComponent = () => {
           isSearchable={true}
           name="currency"
           width="400px"
+          formatOptionLabel={formatOptionLabel}
           defaultValue={currencies.find(option => option.value === user?.baseCurrency)}
           options={currencies}
           onChange={option => onChange(option)}

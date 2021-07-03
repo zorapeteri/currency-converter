@@ -3,6 +3,7 @@ import style from './SavedCurrencies.module.scss';
 import { firestore } from '../../firebase';
 import Select from 'react-select';
 import { UserContext } from '../../providers/UserProvider';
+import formatOptionLabel from '../../formatOptionLabel';
 
 const SavedCurrencies: React.FunctionComponent = () => {
   const { user } = useContext(UserContext);
@@ -35,7 +36,7 @@ const SavedCurrencies: React.FunctionComponent = () => {
         savedCurrencies,
       });
     }
-  }, [savedCurrencies]);
+  }, [savedCurrencies, user]);
 
   const onChange = (option: ReactSelectOptionType | null) => {
     if (option) {
@@ -59,6 +60,7 @@ const SavedCurrencies: React.FunctionComponent = () => {
           isClearable={false}
           isRtl={false}
           isSearchable={true}
+          formatOptionLabel={formatOptionLabel}
           name="currency"
           width="400px"
           options={allCurrencies.filter(currency => !savedCurrencies.includes(currency.value))}

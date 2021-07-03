@@ -35,6 +35,40 @@ strong {
   font-size: 1.17rem;
 }
 
+.convertCurrencySelect {
+  min-width: 105px;
+
+  .select__control {
+    border: none;
+    padding: 2px;
+    box-shadow: none;
+
+    &:hover {
+      background-color: lighten($darksteelblue, 50%);
+    }
+    
+    .select__value-container {
+      padding: 0;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border: none !important;
+      border-color: transparent;
+    }
+
+    .select__indicators {
+
+      .select__indicator-separator {
+        display: none;
+      }
+
+      .select__dropdown-indicator {
+        color: black;
+        padding: 8px 0;
+      }
+    }
+  }
+}
+
 .roundedContainer {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
+import Convert from './components/Convert';
 import Header from './components/Header';
 import Home from './components/Home';
 import Loading from './components/Loading';
@@ -29,7 +30,7 @@ function App() {
               </Route>
 
               <Route exact path="/conversion">
-                <h1>Conversion</h1>
+                <Convert />
               </Route>
             </>
           )}

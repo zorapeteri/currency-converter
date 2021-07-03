@@ -1,0 +1,87 @@
+@import '../../scss/variables.scss';
+
+.convert {
+  display: grid;
+  grid-template-columns: 1fr 1rem 1fr;
+  place-items: center;
+  max-width: 100%;
+  min-width: 50%;
+  padding: 0 20px;
+
+  .container {
+    border: 2px solid lighten($darksteelblue, 30%);
+    border-radius: 10px;
+    padding: 1.4rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+
+    input {
+      display: block;
+      font-weight: bold;
+      font-size: 1.4rem;
+      border: none;
+      outline: none;
+      max-width: 200px;
+      width: 100%;
+    }
+  }
+
+  button {
+    border: none;
+    outline: none;
+    color: $darksteelblue;
+    background-color: white;
+    border-radius: 50%;
+    height: 3rem;
+    width: 3rem;
+    font-size: 1.5em;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s linear;
+    z-index: 2;
+
+    &:hover, &:focus-visible {
+      background-color: $darksteelblue;
+      color: rgba(white, 0.95);
+    }
+  }
+}
+
+@media #{$small} {
+  .convert {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1rem 1fr;
+    width: 100%;
+
+    .container {
+      flex-direction: column;
+      position: relative;
+      padding: 1.4rem 1rem 4rem;
+      width: 100%;
+
+      :global .convertCurrencySelect {
+        max-width: 105px;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        
+        :global .select__control {
+          transform: scale(0.8);
+        }
+      }
+    }
+
+    button {
+      border: 1.5px solid $darksteelblue;
+      width: 2em;
+      height: 2em;
+      font-size: 1.2rem;
+
+      svg {
+        transform: rotate(90deg);
+      }
+    }
+  }
+}
