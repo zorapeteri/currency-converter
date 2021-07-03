@@ -17,6 +17,7 @@ const Auth: React.FunctionComponent = () => {
       <h1>{authType === 'signin' ? 'Sign in' : 'Sign up'}</h1>
       <label htmlFor="email">E-mail address</label>
       <input
+        data-testid="email"
         id="email"
         type="email"
         value={email}
@@ -26,6 +27,7 @@ const Auth: React.FunctionComponent = () => {
       <br />
       <label htmlFor="password">Password</label>
       <input
+        data-testid="password"
         id="password"
         type="password"
         value={password}
@@ -43,9 +45,9 @@ const Auth: React.FunctionComponent = () => {
 
       <p>
         {authType === 'signin' ? 'No account?' : 'Have an account?'}
-        <a onClick={() => setAuthType(authType === 'signin' ? 'signup' : 'signin')}>
+        <button onClick={() => setAuthType(authType === 'signin' ? 'signup' : 'signin')}>
           {authType === 'signup' ? 'Sign in' : 'Sign up'}
-        </a>
+        </button>
       </p>
     </div>
   );
