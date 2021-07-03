@@ -70,7 +70,7 @@ const SavedCurrencies: React.FunctionComponent = () => {
       <ul>
         {savedCurrencies.map(currency => (
           <li key={currency}>
-            <img src={`${process.env.PUBLIC_URL}/assets/flags/${currency}.png`} alt="" />
+            <img src={`${process.env.PUBLIC_URL}/assets/flags/${currency.toLowerCase()}.png`} alt="" />
             <span>{allCurrencies.find(option => option.value === currency)?.label}</span>
             <button className="btn" onClick={() => removeSavedCurrency(currency)}>
               Remove

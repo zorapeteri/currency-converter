@@ -85,7 +85,7 @@ const Home: React.FunctionComponent = () => {
         />
       )}
       <h1>
-        <img src={`${process.env.PUBLIC_URL}/assets/flags/${user?.baseCurrency}.png`} alt="" />1{' '}
+        <img src={`${process.env.PUBLIC_URL}/assets/flags/${user?.baseCurrency.toLowerCase()}.png`} alt="" />1{' '}
         {user?.baseCurrency} =
       </h1>
       {isLoading && (
@@ -100,7 +100,7 @@ const Home: React.FunctionComponent = () => {
             .filter(currency => currency !== user?.baseCurrency)
             .map(currency => (
               <li key={currency}>
-                <img src={`${process.env.PUBLIC_URL}/assets/flags/${currency}.png`} alt="" />
+                <img src={`${process.env.PUBLIC_URL}/assets/flags/${currency.toLowerCase()}.png`} alt="" />
                 {rates[currency].toFixed(3)} {currency}
                 <span className={style.switchUp}>
                   1 {currency} = {(1 / rates[currency]).toFixed(3)} {user?.baseCurrency}
