@@ -4,21 +4,17 @@ import { useHistory } from "react-router-dom";
 
 type ProfileInfoProps = {
   user: User;
+  signOut: () => void;
 };
 
 const ProfileInfo: React.FunctionComponent<ProfileInfoProps> = (props: ProfileInfoProps) => {
 
-  const history = useHistory();
-
-  const signOut = () => {
-    auth.signOut();
-    history.push('/convert');
-  }
+  const { user, signOut } = props;
 
   return (
     <div className="roundedContainer">
       <small>You are signed in as</small>
-      <strong>{props.user.email}</strong>
+      <strong>{user.email}</strong>
       <button className="btn" onClick={() => signOut()}>
         Sign out
       </button>
