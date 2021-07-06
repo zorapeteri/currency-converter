@@ -67,7 +67,7 @@ const Home: React.FunctionComponent = () => {
       <h1>
         <img
           src={`${process.env.PUBLIC_URL}/assets/flags/${user.baseCurrency.toLowerCase()}.png`}
-          alt=""
+          alt={`${user.baseCurrency} flag`}
         />
         1 {user.baseCurrency} =
       </h1>
@@ -85,7 +85,7 @@ const Home: React.FunctionComponent = () => {
               <li key={currency}>
                 <img
                   src={`${process.env.PUBLIC_URL}/assets/flags/${currency.toLowerCase()}.png`}
-                  alt=""
+                  alt={`${currency} flag`}
                 />
                 {baseCurrencyRates[currency].toFixed(3)} {currency}
                 <span className={style.switchUp}>

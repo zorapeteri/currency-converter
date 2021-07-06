@@ -3,14 +3,7 @@ import { render, screen } from '@testing-library/react';
 import Header from './Header';
 import { BrowserRouter as Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { UserContext } from '../../providers/UserProvider';
-
-const user = {
-  displayName: '',
-  savedCurrencies: [],
-  baseCurrency: 'EUR',
-  id: '',
-};
+import MockUserProvider, { mockUser } from '../../mock/MockUserProvider';
 
 describe('Header', () => {
   it('should render the Header component', () => {
@@ -38,13 +31,14 @@ describe('Header', () => {
 
   it('should display home when signed in', () => {
     render(
-      <UserContext.Provider value={{ user, isLoading: false }}>
+      <MockUserProvider>
         <Router>
           <Header />
         </Router>
-      </UserContext.Provider>,
+      </MockUserProvider>,
     );
 
     screen.getByText('Home');
+    screen.getByText(mockUser.displayName);
   });
 });
