@@ -4,7 +4,7 @@ import Auth from '../Auth';
 import BaseCurrency from '../BaseCurrency';
 import ProfileInfo from '../ProfileInfo';
 import SavedCurrencies from '../SavedCurrencies';
-import { auth } from '../../firebase';
+import { auth, firestore } from '../../firebase';
 import { useHistory } from "react-router-dom";
 
 const ProfilePage: React.FunctionComponent = () => {
@@ -17,12 +17,25 @@ const ProfilePage: React.FunctionComponent = () => {
     history.push('/convert');
   }
 
+  const onBaseCurrencyChange = (baseCurrency: string) => {
+    firestore.collection('users').doc(user?.id).update({ baseCurrency });
+  };
+
+  const updateSavedCurrencies = (savedCurrencies: string[]) => {
+    firestore.doc(`users/${user?.id}`).update({
+      savedCurrencies,
+    });
+  };
+
   if (user) {
     return (
       <>
         <ProfileInfo user={user} signOut={signOut} />
-        <BaseCurrency />
-        <SavedCurrencies />
+        <BaseCurrency baseCurrency={user.baseCurrency} onChange={onBaseCurrencyChange} />
+        <SavedCurrencies
+          savedCurrencies={user.savedCurrencies}
+          updateSavedCurrencies={updateSavedCurrencies}
+        />
       </>
     );
   }

@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import style from './SavedCurrencies.module.scss';
-import { firestore } from '../../firebase';
-import Select from 'react-select';
-import { UserContext } from '../../providers/UserProvider';
-import formatOptionLabel from '../../formatOptionLabel';
+import CurrencySelect from '../CurrencySelect';
+import { CurrencyContext } from '../../providers/CurrencyProvider';
 
-const SavedCurrencies: React.FunctionComponent = () => {
-  const { user } = useContext(UserContext);
+type SavedCurrenciesProps = {
+  savedCurrencies: string[],
+  updateSavedCurrencies: (arg: string[]) => void;
+}
 
-  const [allCurrencies, setAllCurrencies] = useState<ReactSelectOptionType[]>([]);
-  const [savedCurrencies, setSavedCurrencies] = useState<string[]>(user?.savedCurrencies || []);
+const SavedCurrencies: React.FunctionComponent<SavedCurrenciesProps> = (props: SavedCurrenciesProps) => {
+  const { symbols } = useContext(CurrencyContext);
+
+  const [savedCurrencies, setSavedCurrencies] = useState<string[]>(props.savedCurrencies || []);
   const [isAddingCurrency, setAddingCurrency] = useState<boolean>(false);
 
   const removeSavedCurrency = (currency: string) => {
@@ -21,29 +23,10 @@ const SavedCurrencies: React.FunctionComponent = () => {
   };
 
   useEffect(() => {
-    fetch('https://cool-currency-convert-server.herokuapp.com/symbols')
-      .then(res => res.json())
-      .then(res => {
-        setAllCurrencies(
-          Object.keys(res).map(key => ({ value: key, label: `${key} (${res[key]})` })),
-        );
-      });
-  }, []);
-
-  useEffect(() => {
-    if (savedCurrencies !== user?.savedCurrencies) {
-      firestore.doc(`users/${user?.id}`).update({
-        savedCurrencies,
-      });
+    if (savedCurrencies !== props.savedCurrencies) {
+      props.updateSavedCurrencies(savedCurrencies);
     }
-  }, [savedCurrencies, user]);
-
-  const onChange = (option: ReactSelectOptionType | null) => {
-    if (option) {
-      addSavedCurrency(option.value);
-      setAddingCurrency(false);
-    }
-  };
+  }, [savedCurrencies, props]);
 
   return (
     <div className={`roundedContainer ${style.savedCurrencies} `}>
@@ -52,26 +35,21 @@ const SavedCurrencies: React.FunctionComponent = () => {
         {isAddingCurrency ? 'Cancel' : 'Add currency'}
       </button>
       {isAddingCurrency && (
-        <Select
-          className="basic-single"
-          classNamePrefix="select"
-          isDisabled={false}
-          isLoading={false}
-          isClearable={false}
-          isRtl={false}
-          isSearchable={true}
-          formatOptionLabel={formatOptionLabel}
-          name="currency"
-          width="400px"
-          options={allCurrencies.filter(currency => !savedCurrencies.includes(currency.value))}
-          onChange={option => onChange(option)}
+        <CurrencySelect 
+          exclude={savedCurrencies}
+          prioritise={[]}
+          hideNames={false}
+          onChange={value => {
+            addSavedCurrency(value);
+            setAddingCurrency(false);
+          }}
         />
       )}
       <ul>
         {savedCurrencies.map(currency => (
           <li key={currency}>
             <img src={`${process.env.PUBLIC_URL}/assets/flags/${currency.toLowerCase()}.png`} alt="" />
-            <span>{allCurrencies.find(option => option.value === currency)?.label}</span>
+            <span>{symbols && `${currency} (${symbols[currency]})`}</span>
             <button className="btn" onClick={() => removeSavedCurrency(currency)}>
               Remove
             </button>

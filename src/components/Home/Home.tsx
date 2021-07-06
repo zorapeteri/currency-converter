@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import style from './Home.module.scss';
 import { UserContext } from '../../providers/UserProvider';
-import Select from 'react-select';
 import { firestore } from '../../firebase';
-import formatOptionLabel from '../../formatOptionLabel';
 import { ImSpinner8 } from 'react-icons/im';
+import { CurrencyContext } from '../../providers/CurrencyProvider';
+import CurrencySelect from '../CurrencySelect';
 
 const queueShowSwitchUp = (hold: number, next: number, start: number) => {
   setTimeout(() => {
@@ -21,48 +21,32 @@ const queueShowSwitchUp = (hold: number, next: number, start: number) => {
 
 const Home: React.FunctionComponent = () => {
   const { user } = useContext(UserContext);
+  const { rates } = useContext(CurrencyContext);
 
-  const [currencies, setCurrencies] = useState<ReactSelectOptionType[]>([]);
-  const [rates, setRates] = useState<{ [index: string]: any }>({});
+  const [baseCurrencyRates, setBaseCurrencyRates] = useState<Rates | null>(null);
+
+  useEffect(() => {
+    if (rates && user) {
+      setBaseCurrencyRates(
+        Object.keys(rates).reduce(
+          (a, b) => ({ ...a, [b]: (1 / rates[user.baseCurrency]) * rates[b] }),
+          {},
+        ),
+      );
+    }
+  }, [rates, user]);
+
   const [isChangingBaseCurrency, setChangingBaseCurrency] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
-  const setBaseCurrency = (option: ReactSelectOptionType | null) => {
-    if (option) {
-      firestore.doc(`users/${user?.id}`).update({
-        baseCurrency: option.value,
-      });
-      setChangingBaseCurrency(false);
-    }
-  };
-
   useEffect(() => {
-    fetch('https://cool-currency-convert-server.herokuapp.com/symbols')
-      .then(res => res.json())
-      .then(res => {
-        setCurrencies(Object.keys(res).map(key => ({ value: key, label: `${key} (${res[key]})` })));
-      });
-  }, []);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch(`https://cool-currency-convert-server.herokuapp.com/rates?base=${user?.baseCurrency}`)
-      .then(res => res.json())
-      .then(res => setRates(res));
-  }, [user?.baseCurrency]);
-
-  useEffect(() => {
-    if (Object.keys(rates).length > 0) {
+    if (baseCurrencyRates) {
       queueShowSwitchUp(700, 80, 1000);
       setLoading(false);
     }
-  }, [rates]);
+  }, [baseCurrencyRates]);
 
-  const getBaseCurrencyOptions = () => {
-    return currencies
-      .sort((a, b) => (user?.savedCurrencies.includes(a.value) ? -1 : 0))
-      .filter(currency => currency.value !== user?.baseCurrency);
-  };
+  if (!user) return null;
 
   return (
     <div className={style.home}>
@@ -70,40 +54,42 @@ const Home: React.FunctionComponent = () => {
         {isChangingBaseCurrency ? 'Cancel' : 'Change base currency'}
       </button>
       {isChangingBaseCurrency && (
-        <Select
-          className="basic-single"
-          classNamePrefix="select"
-          isDisabled={false}
-          isLoading={false}
-          isClearable={false}
-          isRtl={false}
-          isSearchable={true}
-          name="currency"
-          options={getBaseCurrencyOptions()}
-          onChange={option => setBaseCurrency(option)}
-          formatOptionLabel={formatOptionLabel}
+        <CurrencySelect
+          exclude={[user.baseCurrency]}
+          prioritise={user.savedCurrencies}
+          hideNames={false}
+          onChange={baseCurrency => {
+            firestore.doc(`users/${user?.id}`).update({ baseCurrency });
+            setChangingBaseCurrency(false);
+          }}
         />
       )}
       <h1>
-        <img src={`${process.env.PUBLIC_URL}/assets/flags/${user?.baseCurrency.toLowerCase()}.png`} alt="" />1{' '}
-        {user?.baseCurrency} =
+        <img
+          src={`${process.env.PUBLIC_URL}/assets/flags/${user.baseCurrency.toLowerCase()}.png`}
+          alt=""
+        />
+        1 {user.baseCurrency} =
       </h1>
       {isLoading && (
         <span className={style.loading}>
           <ImSpinner8 />
         </span>
       )}
-      {!isLoading && (
+      {!isLoading && baseCurrencyRates && (
         <ul>
-          {Object.keys(rates)
+          {Object.keys(baseCurrencyRates)
             .sort((a, b) => (user?.savedCurrencies.includes(a) ? -1 : 0))
             .filter(currency => currency !== user?.baseCurrency)
             .map(currency => (
               <li key={currency}>
-                <img src={`${process.env.PUBLIC_URL}/assets/flags/${currency.toLowerCase()}.png`} alt="" />
-                {rates[currency].toFixed(3)} {currency}
+                <img
+                  src={`${process.env.PUBLIC_URL}/assets/flags/${currency.toLowerCase()}.png`}
+                  alt=""
+                />
+                {baseCurrencyRates[currency].toFixed(3)} {currency}
                 <span className={style.switchUp}>
-                  1 {currency} = {(1 / rates[currency]).toFixed(3)} {user?.baseCurrency}
+                  1 {currency} = {(1 / baseCurrencyRates[currency]).toFixed(3)} {user?.baseCurrency}
                 </span>
               </li>
             ))}

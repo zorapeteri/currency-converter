@@ -1,50 +1,36 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { UserContext } from '../../providers/UserProvider';
-import { firestore } from '../../firebase';
-import Select from 'react-select';
-import formatOptionLabel from '../../formatOptionLabel';
+import React from 'react';
+import CurrencySelect from '../CurrencySelect';
 
-const BaseCurrency: React.FunctionComponent = () => {
-  const { user } = useContext(UserContext);
+type BaseCurrencyProps = {
+  baseCurrency: string;
+  onChange: (value: string) => void;
+};;
 
-  const [currencies, setCurrencies] = useState<ReactSelectOptionType[]>([]);
-
-  useEffect(() => {
-    fetch('https://cool-currency-convert-server.herokuapp.com/symbols')
-      .then(res => res.json())
-      .then(res => {
-        setCurrencies(Object.keys(res).map(key => ({ value: key, label: `${key} (${res[key]})` })));
-      });
-  }, []);
-
-  const onChange = (option: ReactSelectOptionType | null) => {
-    if (option) {
-      firestore.collection('users').doc(user?.id).update({ baseCurrency: option.value });
-    }
-  };
+const BaseCurrency: React.FunctionComponent<BaseCurrencyProps> = (props: BaseCurrencyProps) => {
+  const { baseCurrency, onChange } = props;
 
   return (
     <div className="roundedContainer">
       <strong>Your base currency</strong>
-      {currencies.length && (
-        <Select
-          className="basic-single"
-          classNamePrefix="select"
-          isDisabled={false}
-          isLoading={false}
-          isClearable={false}
-          isRtl={false}
-          isSearchable={true}
-          name="currency"
-          width="400px"
-          formatOptionLabel={formatOptionLabel}
-          defaultValue={currencies.find(option => option.value === user?.baseCurrency)}
-          options={currencies}
-          onChange={option => onChange(option)}
-        />
-      )}
+      <CurrencySelect
+        exclude={[]}
+        prioritise={[]}
+        hideNames={false}
+        defaultValue={baseCurrency}
+        onChange={onChange}
+      />
     </div>
   );
 };
 
 export default BaseCurrency;
+
+             
+             
+           
+             
+             
+           
+             
+             
+           

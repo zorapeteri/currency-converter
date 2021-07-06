@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext, useReducer } from 'react';
 import convertReducer from '../../reducers/convertReducer';
 import style from './Convert.module.scss';
-import Select from 'react-select';
 import { UserContext } from '../../providers/UserProvider';
 import { MdSwapHoriz } from 'react-icons/md';
-import formatOptionLabel from '../../formatOptionLabel';
+import { CurrencyContext } from '../../providers/CurrencyProvider';
+import CurrencySelect from '../CurrencySelect';
 
 const getDefaultTo = (user: User | null) => {
   if (user) {
@@ -32,28 +32,32 @@ const initialConvertState: ConvertStateType = {
 
 const Convert: React.FunctionComponent = () => {
   const { user } = useContext(UserContext);
+  const { rates } = useContext(CurrencyContext);
 
   const [isLoading, setLoading] = useState(true);
-  const [currencies, setCurrencies] = useState<ReactSelectOptionType[]>([]);
   const [convertState, dispatch] = useReducer(convertReducer, initialConvertState);
 
   useEffect(() => {
-    fetch(`https://cool-currency-convert-server.herokuapp.com/rates?base=${user?.baseCurrency || 'EUR'}`)
-      .then(res => res.json())
-      .then(res => {
-        setCurrencies(Object.keys(res).map(key => ({ value: key, label: key })));
-        dispatch({ type: 'SET_RATES', payload: res });
-        setLoading(false);
+    if (rates && user) {
+      dispatch({
+        type: 'SET_RATES',
+        payload: Object.keys(rates).reduce(
+          (a, b) => ({ ...a, [b]: (1 / rates[user.baseCurrency]) * rates[b] }),
+          {},
+        ),
       });
 
-    dispatch({
-      type: 'SET_CURRENCIES',
-      payload: {
-        from: user?.baseCurrency || 'EUR',
-        to: getDefaultTo(user),
-      },
-    });
-  }, [user]);
+      dispatch({
+        type: 'SET_CURRENCIES',
+        payload: {
+          from: user.baseCurrency || 'EUR',
+          to: getDefaultTo(user),
+        },
+      });
+
+      setLoading(false);
+    }
+  }, [user, rates]);
 
   if (isLoading) return null;
 
@@ -68,28 +72,20 @@ const Convert: React.FunctionComponent = () => {
           onChange={e => dispatch({ type: 'AMOUNT_FROM_CHANGE', payload: e.target.value })}
           autoFocus={true}
         />
-        <Select
-          className="basic-single convertCurrencySelect"
-          classNamePrefix="select"
-          isDisabled={false}
-          isLoading={false}
-          isClearable={false}
-          isRtl={false}
-          isSearchable={true}
-          name="currency"
-          value={currencies.find(option => option.value === convertState.from)}
-          onChange={option => {
-            if (option) {
-              if (option.value === convertState.to) {
-                dispatch({ type: 'SWITCH' });
-              } else {
-                dispatch({ type: 'FROM_CHANGE', payload: option.value });
-              }
+        <CurrencySelect
+          className="convertCurrencySelect"
+          exclude={[]}
+          prioritise={user?.savedCurrencies || []}
+          hideNames={true}
+          value={convertState.from}
+          onChange={value => {
+            if (value === convertState.to) {
+              dispatch({ type: 'SWITCH' });
+            } else {
+              dispatch({ type: 'FROM_CHANGE', payload: value });
             }
           }}
-          options={currencies.filter(currency => currency.value !== convertState.from)}
-          aria-label="from"
-          formatOptionLabel={formatOptionLabel}
+          ariaLabel="from"
         />
       </div>
       <button title="switch" onClick={() => dispatch({ type: 'SWITCH' })}>
@@ -103,28 +99,20 @@ const Convert: React.FunctionComponent = () => {
           value={convertState.toInputText}
           onChange={e => dispatch({ type: 'AMOUNT_TO_CHANGE', payload: e.target.value })}
         />
-        <Select
-          className="basic-single convertCurrencySelect"
-          classNamePrefix="select"
-          isDisabled={false}
-          isLoading={false}
-          isClearable={false}
-          isRtl={false}
-          isSearchable={true}
-          name="currency"
-          value={currencies.find(option => option.value === convertState.to)}
-          onChange={option => {
-            if (option) {
-              if (option.value === convertState.from) {
+        <CurrencySelect
+          className="convertCurrencySelect"
+          exclude={[]}
+          prioritise={user?.savedCurrencies || []}
+          hideNames={true}
+          value={convertState.to}
+          onChange={value => {
+            if (value === convertState.from) {
                 dispatch({ type: 'SWITCH' });
               } else {
-                dispatch({ type: 'TO_CHANGE', payload: option.value });
+                dispatch({ type: 'TO_CHANGE', payload: value });
               }
-            }
           }}
-          options={currencies.filter(currency => currency.value !== convertState.to)}
-          aria-label="to"
-          formatOptionLabel={formatOptionLabel}
+          ariaLabel="to"
         />
       </div>
     </div>

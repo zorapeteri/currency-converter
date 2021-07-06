@@ -4,11 +4,14 @@ import './scss/reset.scss';
 import './scss/global.scss';
 import App from './App';
 import UserProvider from './providers/UserProvider';
+import CurrencyProvider from './providers/CurrencyProvider';
 
 ReactDOM.render(
   <React.StrictMode>
     <UserProvider>
-      <App />
+      <CurrencyProvider>
+        <App />
+      </CurrencyProvider>
     </UserProvider>
   </React.StrictMode>,
   document.getElementById('root'),

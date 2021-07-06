@@ -17,14 +17,14 @@ function App() {
       <div className="App">
         <Header />
         <main>
-          <Route path="/">
+          <Route exact path="/">
             <Redirect to="convert" />
           </Route>
           <Route exact path="/profile">
             <ProfilePage />
           </Route>
           <Route exact path="/convert">
-              <Convert />
+            <Convert />
           </Route>
           {user && (
             <Route exact path="/home">

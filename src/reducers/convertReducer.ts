@@ -1,5 +1,5 @@
 const inputToFloat = (text: string) => parseFloat(text.replace(',', '.').replace(/\s/gi, '')) || 0;
-const filterInput = (text: string) => text.replace(/([^\d|,|\.])/gi, '');
+const filterInput = (text: string) => text.replace(/([^\d|,|.])/gi, '');
 
 const reducer = (state: ConvertStateType, action: { type: string; payload?: any }) => {
   if (action.type === 'SET_RATES') {

@@ -11,8 +11,11 @@ type ReactSelectOptionType = {
   label: any;
 };
 
+type Rates = { [key: string]: any };
+type Symbols = { [key: string]: any };
+
 type ConvertStateType = {
-  rates: any;
+  rates: Rates;
   from: string;
   to: string;
   amountFrom: number;

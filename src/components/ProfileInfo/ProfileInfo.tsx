@@ -1,6 +1,4 @@
 import React from 'react';
-import { auth } from '../../firebase';
-import { useHistory } from "react-router-dom";
 
 type ProfileInfoProps = {
   user: User;
