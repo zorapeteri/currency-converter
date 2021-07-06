@@ -85,7 +85,7 @@ const Convert: React.FunctionComponent = () => {
               dispatch({ type: 'FROM_CHANGE', payload: value });
             }
           }}
-          ariaLabel="from"
+          ariaLabel="currency from"
         />
       </div>
       <button title="switch" onClick={() => dispatch({ type: 'SWITCH' })}>
@@ -112,7 +112,7 @@ const Convert: React.FunctionComponent = () => {
                 dispatch({ type: 'TO_CHANGE', payload: value });
               }
           }}
-          ariaLabel="to"
+          ariaLabel="currency to"
         />
       </div>
     </div>
