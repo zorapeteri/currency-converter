@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import style from './SavedCurrencies.module.scss';
 import CurrencySelect from '../CurrencySelect';
 import { CurrencyContext } from '../../providers/CurrencyProvider';
@@ -15,18 +15,19 @@ const SavedCurrencies: React.FunctionComponent<SavedCurrenciesProps> = (props: S
   const [isAddingCurrency, setAddingCurrency] = useState<boolean>(false);
 
   const removeSavedCurrency = (currency: string) => {
-    setSavedCurrencies(savedCurrencies.filter(savedCurrency => savedCurrency !== currency));
+    setSavedCurrencies((prev) => {
+      const removed = prev.filter(savedCurrency => savedCurrency !== currency);
+      props.updateSavedCurrencies(removed);
+      return removed;
+    })
   };
 
   const addSavedCurrency = (currency: string) => {
-    setSavedCurrencies([...savedCurrencies, currency]);
+    setSavedCurrencies((prev) => {
+      props.updateSavedCurrencies([...prev, currency]);
+      return [...prev, currency];
+    });
   };
-
-  useEffect(() => {
-    if (savedCurrencies !== props.savedCurrencies) {
-      props.updateSavedCurrencies(savedCurrencies);
-    }
-  }, [savedCurrencies, props]);
 
   return (
     <div className={`roundedContainer ${style.savedCurrencies} `}>
@@ -35,7 +36,7 @@ const SavedCurrencies: React.FunctionComponent<SavedCurrenciesProps> = (props: S
         {isAddingCurrency ? 'Cancel' : 'Add currency'}
       </button>
       {isAddingCurrency && (
-        <CurrencySelect 
+        <CurrencySelect
           exclude={savedCurrencies}
           prioritise={[]}
           hideNames={false}
@@ -48,9 +49,12 @@ const SavedCurrencies: React.FunctionComponent<SavedCurrenciesProps> = (props: S
       <ul>
         {savedCurrencies.map(currency => (
           <li key={currency}>
-            <img src={`${process.env.PUBLIC_URL}/assets/flags/${currency.toLowerCase()}.png`} alt="" />
+            <img
+              src={`${process.env.PUBLIC_URL}/assets/flags/${currency.toLowerCase()}.png`}
+              alt=""
+            />
             <span>{symbols && `${currency} (${symbols[currency]})`}</span>
-            <button className="btn" onClick={() => removeSavedCurrency(currency)}>
+            <button className="btn" onClick={() => removeSavedCurrency(currency)} aria-label={`remove ${currency} from saved currencies`}>
               Remove
             </button>
           </li>

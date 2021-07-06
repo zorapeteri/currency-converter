@@ -18,11 +18,28 @@ const formatOptionLabel = ({ value, label }: ReactSelectOptionType) => (
     <img
       style={{ width: '1.8em', marginRight: '1em' }}
       src={`${process.env.PUBLIC_URL}/assets/flags/${value.toLowerCase()}.png`}
-      alt=""
+      alt={`${value} flag`}
     ></img>
     <div>{label}</div>
   </div>
 );
+
+const getOptions = ({
+  symbols,
+  exclude,
+  prioritise,
+  hideNames,
+}: {
+  symbols: Symbols;
+  exclude: string[];
+  prioritise: string[];
+  hideNames: boolean;
+}) => {
+  return Object.keys(symbols)
+    .filter(key => !exclude.includes(key))
+    .sort((a, b) => (prioritise.includes(a) ? -1 : 0))
+    .map(key => ({ value: key, label: `${key}${hideNames ? '' : ` (${symbols[key]})`}` }));
+};
 
 const CurrencySelect: React.FunctionComponent<CurrencySelectProps> = (
   props: CurrencySelectProps,
@@ -38,20 +55,17 @@ const CurrencySelect: React.FunctionComponent<CurrencySelectProps> = (
     className,
   } = props;
   const { symbols } = useContext(CurrencyContext);
-  const [options, setOptions] = useState<ReactSelectOptionType[] | null>(null);
+  const [options, setOptions] = useState<ReactSelectOptionType[] | null>(
+    symbols ? getOptions({ symbols, hideNames, exclude, prioritise }) : [],
+  );
 
   useEffect(() => {
     if (symbols) {
-      setOptions(
-        Object.keys(symbols)
-          .filter(key => !exclude.includes(key))
-          .sort((a, b) => (prioritise.includes(a) ? -1 : 0))
-          .map(key => ({ value: key, label: `${key}${hideNames ? '' : ` (${symbols[key]})`}` })),
-      );
+      setOptions(getOptions({ symbols, hideNames, exclude, prioritise }));
     }
   }, [symbols, exclude, hideNames, prioritise]);
 
-  if (!options) return null;
+  if (!options) return <h1>{JSON.stringify({ symbols, options })}</h1>;
 
   return (
     <Select
@@ -67,7 +81,7 @@ const CurrencySelect: React.FunctionComponent<CurrencySelectProps> = (
       formatOptionLabel={formatOptionLabel}
       value={options.find(option => option.value === value)}
       defaultValue={options.find(option => option.value === defaultValue)}
-      ariaLabel={ariaLabel}
+      aria-label={ariaLabel}
       onChange={option => {
         if (option) onChange(option.value);
       }}
